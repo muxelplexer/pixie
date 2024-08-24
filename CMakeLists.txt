@@ -36,6 +36,8 @@ target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR})
 
 add_executable(pixie
     src/main.cpp
+    src/sdl/window.cpp
+    src/ui/ui.cpp
 )
 
 target_link_libraries(pixie PRIVATE
