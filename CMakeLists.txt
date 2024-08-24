@@ -29,8 +29,8 @@ add_library(imgui STATIC
          ${imgui_SOURCE_DIR}/imgui_demo.cpp
          ${imgui_SOURCE_DIR}/imgui_widgets.cpp
          ${imgui_SOURCE_DIR}/imgui_tables.cpp
-         ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
-         ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+         ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
+         ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
 )
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR})
 
@@ -63,7 +63,7 @@ set_target_properties(pixie PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
 target_compile_options(pixie PRIVATE
     -Wall -Wextra -Wpedantic -Wshadow -Weffc++ -Wconversion -Wsign-conversion -fms-extensions
 )
-target_compile_definitions(pixie 
+target_compile_definitions(pixie
     PRIVATE GLFW_INCLUDE_NONE
 )
 

@@ -5,6 +5,10 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
+#include <imgui.h>
+#include <backends/imgui_impl_sdl3.h>
+#include <backends/imgui_impl_sdlrenderer3.h>
+
 namespace {
     template<class T>
     struct deleter_of;
@@ -49,11 +53,24 @@ SDL_AppResult SDL_AppInit(void **, int , char *[])
     s_window.reset(window);
     s_renderer.reset(renderer);
     SDL_SetRenderVSync(renderer, 1);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    auto& io = ImGui::GetIO();
+
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplSDL3_InitForSDLRenderer(s_window.get(), s_renderer.get());
+    ImGui_ImplSDLRenderer3_Init(s_renderer.get());
+
     return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppEvent(void *, const SDL_Event *event)
 {
+    ImGui_ImplSDL3_ProcessEvent(event);
     if (event->type == SDL_EVENT_QUIT) {
         s_running = false;
     }
@@ -75,12 +92,33 @@ SDL_AppResult SDL_AppEvent(void *, const SDL_Event *event)
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void *)
 {
+
+    if (SDL_GetWindowFlags(s_window.get()) & SDL_WINDOW_MINIMIZED)
+    {
+        SDL_Delay(10);
+        return s_running ? SDL_APP_CONTINUE : SDL_APP_SUCCESS;
+    }
+
+    ImGui_ImplSDLRenderer3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+
+    if (ImGui::BeginMainMenuBar())
+    {
+        ImGui::Text("This is a tooltip text. I am mean! >:(");
+        ImGui::EndMainMenuBar();
+    }
+
+    ImGui::Render();
+
     /* since we're always fading red, we leave green and blue at zero.
        alpha doesn't mean much here, so leave it at full (255, no transparency). */
     SDL_SetRenderDrawColor(s_renderer.get(), s_red, 0, 0, 255);
 
     /* clear the window to the draw color. */
     SDL_RenderClear(s_renderer.get());
+
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), s_renderer.get());
 
     /* put the newly-cleared rendering on the screen. */
     SDL_RenderPresent(s_renderer.get());
@@ -109,6 +147,8 @@ SDL_AppResult SDL_AppIterate(void *)
 
 void SDL_AppQuit(void *)
 {
-
+    ImGui_ImplSDLRenderer3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
 }
 
