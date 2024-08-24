@@ -34,6 +34,9 @@ namespace {
     uint8_t s_red = 0;
     fade_direction s_fade_dir{fade_direction::UP};
     bool s_running{true};
+
+    constexpr uint32_t WINDOW_WIDTH = 1280;
+    constexpr uint32_t WINDOW_HEIGHT = 720;
 }
 
 SDL_AppResult SDL_AppInit(void **, int , char *[])
@@ -46,7 +49,7 @@ SDL_AppResult SDL_AppInit(void **, int , char *[])
     SDL_Window* window;
     SDL_Renderer* renderer;
 
-    if (SDL_CreateWindowAndRenderer("examples/renderer/clear", 640, 480, 0, &window, &renderer) == -1) {
+    if (SDL_CreateWindowAndRenderer("pixie", WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer) == -1) {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Couldn't create window/renderer!", SDL_GetError(), NULL);
         return SDL_APP_FAILURE;
     }
