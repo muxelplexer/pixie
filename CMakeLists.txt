@@ -38,6 +38,7 @@ add_executable(pixie
     src/main.cpp
     src/sdl/window.cpp
     src/ui/ui.cpp
+    src/ui/widgets/fps_counter.cpp
 )
 
 target_link_libraries(pixie PRIVATE
